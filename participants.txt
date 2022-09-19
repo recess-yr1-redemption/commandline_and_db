@@ -1,0 +1,7 @@
+0,ken,5454,hen,1657
+1,sam,1122,bread,1998
+2,jose,656,cake,1767
+3,aron,6556,juice,1755
+4,ben,6999,jerrycan,1745
+5,gin,4545,food,155
+6,grr,4545,food,155
