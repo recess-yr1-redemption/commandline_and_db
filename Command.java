@@ -11,7 +11,31 @@ import java.util.Scanner;
 
 public class Command {
 
-    public void register(String name, String password, String product, String date_of_birth) throws FileNotFoundException, IOException {
+    public void register() throws FileNotFoundException, IOException {
+        Scanner c = new Scanner(System.in);
+        System.out.println(" ");
+
+        System.out.println("Enter Username");
+        String name = c.nextLine();
+        System.out.println("--------------------------");
+        System.out.println("  ");
+
+        System.out.println("Enter Password");
+        String password = c.nextLine();
+        System.out.println("--------------------------");
+        System.out.println("  ");
+
+        System.out.println("Enter Product");
+        String product = c.nextLine();
+        System.out.println("--------------------------");
+        System.out.println("  ");
+
+        System.out.println("Enter Date of Birth");
+        String date_of_birth = c.nextLine();
+        System.out.println("--------------------------");
+        System.out.println("  ");
+
+
         File f = new File("participants.txt");
         BufferedReader br = new BufferedReader(new FileReader(f));
         Object[] lines = br.lines().toArray();
@@ -51,17 +75,38 @@ public class Command {
             System.out.println("---------------------------------------------------");
             System.out.println(" ");
         }
+        c.close();
     }
 
-    public void updateDesc(String product_name, String description) throws FileNotFoundException, IOException {
+    public void updateDesc() throws FileNotFoundException, IOException {
         Scanner sc = new Scanner(System.in);
+        System.out.println("  ");
+
         System.out.println("Enter Username Please");
         String uname = sc.nextLine();
         System.out.println("--------------------------");
+
+        System.out.println("  ");
+        System.out.println("Enter Product Name");
+        String product_name = sc.nextLine();
+        System.out.println("--------------------------");
+
+        System.out.println(" ");
+        System.out.println("Enter the Product Description");
+        String description = sc.nextLine();
+        System.out.println("--------------------------");
+        
+        System.out.println(" ");
+        System.out.println("Enter the Product Price");
+        int price = sc.nextInt();
+        System.out.println("--------------------------");
+        
         System.out.println(" ");
         System.out.println("Enter The total number of Products");
         int total = sc.nextInt();
         System.out.println("--------------------------");
+
+        
 
         File k = new File("participants.txt");
         BufferedReader kr = new BufferedReader(new FileReader(k));
@@ -104,7 +149,7 @@ public class Command {
 
                     BufferedWriter wr = new BufferedWriter(new FileWriter(pr,true));
                     PrintWriter pw = new PrintWriter(wr);
-                    pw.println(proid+","+user+","+product_name+","+total+","+description);
+                    pw.println(proid+","+user+","+product_name+","+total+","+price+","+description);
                     pw.flush();
                     pw.close();
         
@@ -113,9 +158,9 @@ public class Command {
                     System.out.println("Product Description Updated Successfully in products.txt");
                     System.out.println("---------------------------------------------------------"); 
                     System.out.println("------------------------------------------------");
-                    System.out.println("[id | name | product | description ]");
+                    System.out.println("[id | name | product | total | price | description ]");
                     System.out.println("------------------------------------------------");
-                    System.out.println("[ "+proid+" | "+user+" |   "+product_name+" |     "+description+" ]");
+                    System.out.println("[ "+proid+" | "+user+" |   "+product_name+"   | "+total+"  | "+price+"  |  "+description+" ]");
                     System.out.println("---------------------------------------------------");
                     System.out.println(" ");
                 }    
@@ -132,42 +177,89 @@ public class Command {
         
     }
 
-    public void checkRank(String part) throws FileNotFoundException, IOException {
+    public void checkRank() throws FileNotFoundException, IOException {
+        Scanner in = new Scanner(System.in);
+        System.out.println(" ");
+        System.out.println("Please Enter Username");
+        String part = in.nextLine();
+        System.out.println("------------------------------");
+
+        System.out.println(" ");
+        System.out.println("Enter 1 to view previous performances");
+        System.out.println("Enter 2 to view request current performances");
+        System.out.print("Enter Choice: ");
+        int choice = in.nextInt();
+
+        //counting total number of perticipants
+        File k = new File("participants.txt");
+        BufferedReader krr = new BufferedReader(new FileReader(k));
+        Object[] obj2 = krr.lines().toArray();
+
+        int counter = 0;
+        for(int count=0; count<obj2.length;count++){
+            counter++;
+            //System.out.println(counter);
+        }
+        krr.close();
+
+
         File per = new File("performance.txt");
         BufferedReader read = new BufferedReader(new FileReader(per));
         Object[] list = read.lines().toArray();
 
         int avail = 0;
-        int counter = 0;
-        for(int count=0; count<list.length;count++){
-            counter++;
-            //System.out.println(counter);
-        }
         for(int i=0; i<list.length; i++){
             String perf = list[i].toString().trim();
             String[] ranks =  perf.split(",");
             
-            if(part.equalsIgnoreCase(ranks[1])){
+            if(part.equalsIgnoreCase(ranks[1]) && choice == 1){
                 String uid = ranks[0];
                 int position = Integer.parseInt(ranks[2]);
                 int points = Integer.parseInt(ranks[3]);
                 int goods = Integer.parseInt(ranks[4]);
                 int returns = Integer.parseInt(ranks[5]);
+                String date = ranks[6];
+
+                File rp = new File("response.txt");
+                BufferedWriter bf = new BufferedWriter(new FileWriter(rp,true));
+                PrintWriter write = new PrintWriter(bf);
+                write.println(part+","+java.time.LocalTime.now()+", Resquest Seen");
+                write.flush();
+                write.close();
+                
                 avail = 1;
                 System.out.println("---------------------------------------------------------------------");
-                System.out.println("[ UserID | UserName | Rank | Points | Products Left | Return Buyers ]");
+                System.out.println("[ UserID | UserName | Rank | Points | Products Left | Return Buyers | Date     ]");
                 System.out.println("-----------------------------------------------------------------------");
-                System.out.println("[ "+uid+"         "+part+"       "+position+"/"+counter+"       "+points+"          "+goods+"              "+returns+" ]");
+                System.out.println("[ "+uid+"         "+part+"     "+position+"/"+counter+"     "+points+"          "+goods+"             "+returns+"            "+date+" ]");
                 System.out.println("-----------------------------------------------------------------------");
+
+                
             }
         }
         read.close();
+        in.close();
 
-        if(avail==0){
-            System.out.println("-------------------------------------------------------------");
-            System.out.println("Sorry, No User Exist As "+part+" In Our Records");
-            System.out.println("Enter Proper Username! or Records Not Sent From Server As Yet");
-            System.out.println("-------------------------------------------------------------");
+        if(avail==0 && choice == 2){
+            File rq = new File("request.txt");
+            BufferedWriter buff = new BufferedWriter(new FileWriter(rq,true));
+            PrintWriter pt = new PrintWriter(buff);
+            pt.println(part+","+java.time.LocalTime.now()+", Resquesting for ranks");
+            pt.flush();
+            pt.close();
+
+            System.out.println("-------------------------------------------------------------------------------------------");
+            System.out.println("Hello "+part+", These are the possible reasons we have for not having your Performance Results");
+            System.out.println("---------------------------------------------------------------------------------------------");
+            System.out.println("1. You could have entered wrong username, this is because we have no records with this username");
+            System.out.println(" ");
+            System.out.println("2. If you initially registered, then wait for less than 5 minutes as we still contacting the server for your performances");
+            System.out.println("Hopefully, within 5 mins your results shall be out and check again withe choice 1");
+            System.out.println(" ");
+            System.out.println("3. If after 5 minutes you can't access your results, This shows your not registered initally");
+            System.out.println("----------------------------------------------------------------------");
+            System.out.println("Thank you, we are committed to serving you always");
+            System.out.println("---------------------------------------------------------------------------------------------------------------------");
         }
     }
 
@@ -176,6 +268,8 @@ public class Command {
         File file1 = new File("participants.txt");
         File file2 = new File("products.txt");
         File file3 = new File("performance.txt");
+        File file4 = new File("request.txt");
+        File file5 = new File("response.txt");
 
         if(file1.exists()){
             System.out.println(" ");
@@ -210,43 +304,77 @@ public class Command {
             System.out.println("-----------------------------------------------------");
         }
 
+        if(file4.exists()){
+            System.out.println(" ");
+            System.out.println(("File Is Existing as request.txt"));
+            System.out.println("--------------------------------------");
+        }else {
+            file4.createNewFile();
+            System.out.println(" ");
+            System.out.println("New File Is Created Successfully as request.txt");
+            System.out.println("-----------------------------------------------------");
+        }
+
+        if(file5.exists()){
+            System.out.println(" ");
+            System.out.println(("File Is Existing as respose.txt"));
+            System.out.println("--------------------------------------");
+        }else {
+            file5.createNewFile();
+            System.out.println(" ");
+            System.out.println("New File Is Created Successfully as response.txt");
+            System.out.println("-----------------------------------------------------");
+        }
+
+        System.out.println("Please follow this menu in trying work with the command-line");
+        System.out.println(" ");
+        System.out.println("Register");
+        System.out.println("Post_product");
+        System.out.println("Performance");
+        System.out.println("-------------------------------------------------------------");
+        System.out.println("  ");
         
 
         Command arg = new Command();
 
-        if(args.length != 0){
-            if(args.length == 5 && args[0].equals("Register")){
-                String name = args[1];
-                String password = args[2];
-                String product = args[3];
-                String date_of_birth = args[4];
+        Scanner n = new Scanner(System.in);
+        String comand = null;
+        System.out.println("Enter the menu item of choice!");
 
-                arg.register(name, password, product, date_of_birth);
+        while(n.hasNextLine()){
+            //Enter Keyboard
+            comand = n.nextLine();
 
+            if(comand.equalsIgnoreCase("Register")){
+                arg.register();
 
-            }else if(args.length == 3 && args[0].equals("Post_product")){
-                String product_name = args[1];
-                String description = args[2];
-                arg.updateDesc(product_name, description);
+            }else if(comand.equalsIgnoreCase("Post_product")){
+                arg.updateDesc();
 
-            }else if(args.length == 2 && args[0].equals("Performance")){
-                String uname = args[1];
-                arg.checkRank(uname);
+            }else if(comand.equalsIgnoreCase("Performance")){
+                arg.checkRank();
 
-            }else {
-                System.out.println("Invalid Commands!");
-                System.out.println("------------------------------------------------------------");
+            }else{
+                System.out.println("Invalid Command!");
+                System.out.println("-----------------------");
+                System.out.println(" ");
                 System.out.println("Please follow this menu in trying work with the command-line");
                 System.out.println(" ");
-                System.out.println("Register <name> <password> <product> <date_of_birth>");
-                System.out.println("Post_product <product_name>  <description> <name>");
-                System.out.println("Performance <name>");
+                System.out.println("Register");
+                System.out.println("Post_product");
+                System.out.println("Performance");
                 System.out.println("-------------------------------------------------------------");
+                System.out.println("  ");
+
+                System.out.println("Enter the menu item of choice!");
+                
             }
 
-        }else{
 
         }
+        n.close();
+        
+        
     }
     
 }
